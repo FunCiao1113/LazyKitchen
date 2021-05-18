@@ -43,7 +43,6 @@
         android:layout_width="280dp"
         android:layout_height="54dp"
         android:letterSpacing="0.5"
-        android:background="#000000"
         android:text="登录"
         android:textCursorDrawable="@null"
         app:layout_constraintBottom_toBottomOf="parent"
