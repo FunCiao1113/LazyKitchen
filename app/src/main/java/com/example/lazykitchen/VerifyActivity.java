@@ -17,7 +17,7 @@ public class VerifyActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(VerifyActivity.this,VideoActivity.class);
+                Intent intent = new Intent(VerifyActivity.this,MainActivity.class);
                 startActivity(intent);
             }
         });
