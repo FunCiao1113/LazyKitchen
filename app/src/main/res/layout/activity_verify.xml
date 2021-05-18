@@ -4,29 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_200"
+    android:background="#ffffff"
     tools:context=".VerifyActivity">
 
     <EditText
         android:id="@+id/code"
-        android:layout_width="320dp"
-        android:layout_height="45dp"
+        android:layout_width="341dp"
+        android:layout_height="46dp"
+        android:layout_marginRight="28dp"
+        android:textCursorDrawable="@null"
         android:ems="10"
         android:hint="请输入邮件中的验证码"
         android:inputType="number"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.771"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintVertical_bias="0.249" />
 
     <TextView
         android:id="@+id/verifyInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="验证码"
-        android:textColor="@color/purple_700"
+        android:text="输入验证码"
+        android:textColor="#000000 "
         android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/code"
@@ -38,13 +40,15 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="登陆"
+        android:layout_width="280dp"
+        android:layout_height="54dp"
+        android:letterSpacing="0.5"
+        android:background="#000000"
+        android:text="登录"
+        android:textCursorDrawable="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.405" />
+        app:layout_constraintVertical_bias="0.449" />
 </androidx.constraintlayout.widget.ConstraintLayout>
