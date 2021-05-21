@@ -3,6 +3,7 @@ package com.example.lazykitchen.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -18,7 +19,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        NavController navController = Navigation.findNavController(this, R.id.fragment);
+        NavController navController;
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        navController = navHostFragment.getNavController();
         AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.searchFragment,R.id.shareFragment,R.id.personFragment).build();
         NavigationUI.setupActionBarWithNavController(this,navController,configuration);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
