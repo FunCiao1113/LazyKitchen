@@ -1,10 +1,12 @@
-package com.example.lazykitchen;
+package com.example.lazykitchen.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.MediaController;
 import android.widget.VideoView;
+
+import com.example.lazykitchen.R;
 
 public class VideoActivity extends AppCompatActivity {
 

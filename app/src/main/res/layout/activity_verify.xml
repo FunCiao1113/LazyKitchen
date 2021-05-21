@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    tools:context=".VerifyActivity">
+    tools:context=".activity.VerifyActivity">
 
     <EditText
         android:id="@+id/code"
