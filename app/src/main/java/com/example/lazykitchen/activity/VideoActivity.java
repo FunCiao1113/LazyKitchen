@@ -7,6 +7,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.util.ActivityUtils;
 
 public class VideoActivity extends AppCompatActivity {
 
@@ -16,6 +17,7 @@ public class VideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        ActivityUtils.add(this.getClass().getSimpleName(),this);
         initVideoView();
     }
 
