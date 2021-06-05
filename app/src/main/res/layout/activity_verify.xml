@@ -13,7 +13,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="20dp"
         android:ems="10"
-        android:hint="请输入邮件中的验证码"
+        android:hint="请输入短信中的验证码"
         android:inputType="number"
         android:textCursorDrawable="@null"
         app:layout_constraintEnd_toEndOf="parent"
