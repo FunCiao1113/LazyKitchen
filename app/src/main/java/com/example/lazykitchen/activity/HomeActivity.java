@@ -6,6 +6,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 
 import com.example.lazykitchen.R;
@@ -18,6 +19,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        this.getSupportActionBar().hide();
         ActivityUtils.add(this.getClass().getSimpleName(),this);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavController navController;
