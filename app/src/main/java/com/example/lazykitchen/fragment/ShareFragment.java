@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.example.lazykitchen.R;
 
@@ -25,7 +27,12 @@ public class ShareFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.share_fragment, container, false);
+        View view = inflater.inflate(R.layout.share_fragment, container, false);
+        WebView webView = view.findViewById(R.id.webView);
+        webView.loadUrl("file:///android_asset/www/pyq.html");
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        return view;
     }
 
     @Override
