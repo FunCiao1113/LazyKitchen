@@ -2,28 +2,36 @@ package com.example.lazykitchen.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.activity.HomeActivity;
+import com.example.lazykitchen.activity.LoginActivity;
+import com.example.lazykitchen.activity.SettingsActivity;
+import com.example.lazykitchen.activity.VerifyActivity;
+import com.example.lazykitchen.util.AdapterBadge;
 import com.example.lazykitchen.util.AdapterDay;
 import com.example.lazykitchen.util.AdapterWeek;
+import com.example.lazykitchen.util.BadgeItem;
 import com.example.lazykitchen.util.DateUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,14 +39,11 @@ public class PersonFragment extends Fragment {
 
     private PersonViewModel mViewModel;
     private TextView yearAndMonth;
-    private String[] weekItem={"日","一","二","三","四","五","六"};
+    final String[] weekItem={"日","一","二","三","四","五","六"};
     private List<String> dayItem = new ArrayList<String>();
+    private List<BadgeItem> badgeItems = new ArrayList<>();
     AdapterDay adapterDay;
     Calendar calendar = Calendar.getInstance(Locale.CHINA);
-
-    public static PersonFragment newInstance() {
-        return new PersonFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -52,6 +57,16 @@ public class PersonFragment extends Fragment {
         GridView day = view.findViewById(R.id.day);
         adapterDay = new AdapterDay(dayItem);
         day.setAdapter(adapterDay);
+        ImageButton settings = view.findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+        ImageView imageView = view.findViewById(R.id.head_image);
+        imageView.setImageResource(R.drawable.ic_baseline_face_24);
         ImageButton left = view.findViewById(R.id.left);
         left.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +87,20 @@ public class PersonFragment extends Fragment {
                 adapterDay.notifyDataSetChanged();
             }
         });
+        RecyclerView recyclerView = view.findViewById(R.id.achievement);
+        initialBadge();
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        AdapterBadge adapterBadge = new AdapterBadge(badgeItems);
+        recyclerView.setAdapter(adapterBadge);
         return view;
+    }
+
+    public void initialBadge(){
+        for(int i=0;i<8;i++){
+            BadgeItem badgeItem = new BadgeItem(R.drawable.ic_baseline_spa_24,""+i);
+            badgeItems.add(badgeItem);
+        }
     }
 
     public void initial(Calendar calendar){
@@ -83,7 +111,10 @@ public class PersonFragment extends Fragment {
         for(int i=1;i<blank;i++)
             dayItem.add("");
         for(int i=1;i<=days;i++)
-            dayItem.add(i+"");
+            if(i<10)
+                dayItem.add("0"+i);
+            else
+                dayItem.add(""+i);
     }
 
     @Override
