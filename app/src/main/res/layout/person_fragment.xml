@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/yearAndMonth"
-        android:layout_width="297dp"
-        android:layout_height="52dp"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
         android:layout_marginTop="16dp"
         android:background="#679AED"
         android:text="2021年6月"
@@ -47,6 +47,8 @@
         android:id="@+id/day"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="#03A9F4"
+        android:listSelector="@color/teal_200"
         android:numColumns="7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -73,7 +75,7 @@
         app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@drawable/ic_baseline_face_24" />
 
     <TextView
         android:id="@+id/id"
@@ -102,7 +104,8 @@
         android:id="@+id/left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
+        android:layout_marginTop="140dp"
+        android:background="#00431C1C"
         android:src="@android:drawable/ic_media_rew"
         app:layout_constraintEnd_toStartOf="@+id/yearAndMonth"
         app:layout_constraintHorizontal_bias="0.0"
@@ -113,10 +116,32 @@
         android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
+        android:layout_marginTop="140dp"
+        android:background="#004C2020"
         android:src="@android:drawable/ic_media_ff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/yearAndMonth"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/achievement"
+        android:layout_width="0dp"
+        android:layout_height="207dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/grade" />
+
+    <TextView
+        android:id="@+id/grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="成就"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/record" />
 </androidx.constraintlayout.widget.ConstraintLayout>

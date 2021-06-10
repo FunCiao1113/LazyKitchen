@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="设置1">
+        <EditTextPreference
+            android:key="Setting1"
+            android:title="我是标题"
+            android:summary="我是简介" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="设置2">
+        <SwitchPreference
+            android:key="Setting2"
+            android:checked="true"
+            android:title="我是标题"
+            android:summary="我是简介"
+            android:summaryOff="我是关闭选项时的summary"
+            android:summaryOn="我是开启选项时的summary" />
+    </PreferenceCategory>
+</PreferenceScreen>
