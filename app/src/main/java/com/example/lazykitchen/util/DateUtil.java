@@ -13,19 +13,24 @@ public class DateUtil {
         this.calendar = Calendar.getInstance(Locale.CHINA);
     }
 
-    public String getDate(){
-        return calendar.get(Calendar.YEAR)+"年"+(calendar.get(Calendar.MONTH)+1)+"月";
+    public DateUtil(Calendar calendar) {
+        this.calendar = calendar;
     }
 
-    public int getNowDay(){
+    public String getDate() {
+        return calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月";
+    }
+
+    public int getNowDay() {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
-    public int getHowManyDays(){
+
+    public int getHowManyDays() {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
-    public int getWhichDay(){
-        Calendar tmp = Calendar.getInstance(Locale.CHINA);
+    public int getWhichDay() {
+        Calendar tmp = calendar;
         tmp.set(Calendar.DAY_OF_MONTH, tmp.getActualMinimum(Calendar.DAY_OF_MONTH));
         return tmp.get(Calendar.DAY_OF_WEEK);
     }

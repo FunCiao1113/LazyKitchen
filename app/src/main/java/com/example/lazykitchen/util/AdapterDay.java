@@ -48,10 +48,6 @@ public class AdapterDay extends BaseAdapter {
             viewholder = (AdapterDay.ViewHolder) convertView.getTag();// 如果convertView不为空，那么就在convertView中getTag()拿出来
         }
         String num = day.get(position);
-        DateUtil dateUtil = new DateUtil();
-        if(!num.equals("")&&Integer.parseInt(num) == dateUtil.getNowDay()){
-            viewholder.textView.setBackgroundColor(Color.parseColor("#679AED"));
-        }
         viewholder.textView.setText(num);
         return convertView;
     }
