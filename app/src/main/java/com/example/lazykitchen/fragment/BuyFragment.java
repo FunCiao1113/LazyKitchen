@@ -45,12 +45,10 @@ public class BuyFragment extends Fragment {
 
     private void initialVideo(){
         for(int i=0;i<8;i++){
-            VideoItem video1 = new VideoItem("111",i, R.mipmap.ic_launcher);
-            videoList.add(video1);
-            VideoItem video2 = new VideoItem("222",i, R.mipmap.ic_launcher);
-            videoList.add(video2);
-            VideoItem video3 = new VideoItem("333",i, R.mipmap.ic_launcher);
-            videoList.add(video3);
+            //VideoItem video1 = new VideoItem("111",i, R.mipmap.ic_launcher);
+            //videoList.add(video1);
+            //VideoItem video2 = new VideoItem("222",i, R.mipmap.ic_launcher);
+            //videoList.add(video2);
         }
     }
 
