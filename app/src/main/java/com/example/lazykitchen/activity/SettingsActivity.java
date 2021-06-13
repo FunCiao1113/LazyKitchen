@@ -9,12 +9,19 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.fragment.SettingFragment;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.addPreferencesFromResource(R.xml.settings);
+        setContentView(R.layout.activity_settings);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.container, SettingFragment.class, null)
+                    .commit();
+        }
     }
 }
