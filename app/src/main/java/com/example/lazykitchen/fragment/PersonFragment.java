@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.activity.HeadActivity;
 import com.example.lazykitchen.activity.HomeActivity;
 import com.example.lazykitchen.activity.LoginActivity;
 import com.example.lazykitchen.activity.SettingsActivity;
@@ -67,6 +68,13 @@ public class PersonFragment extends Fragment {
         });
         ImageView imageView = view.findViewById(R.id.head_image);
         imageView.setImageResource(R.drawable.ic_baseline_face_24);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), HeadActivity.class);
+                startActivity(intent);
+            }
+        });
         ImageButton left = view.findViewById(R.id.left);
         left.setOnClickListener(new View.OnClickListener() {
             @Override
