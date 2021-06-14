@@ -2,6 +2,7 @@ package com.example.lazykitchen.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,8 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.activity.VideoActivity;
 import com.example.lazykitchen.util.Adapter;
 import com.example.lazykitchen.util.GsonUtils;
+import com.example.lazykitchen.util.OnRecyclerItemClickListener;
 import com.example.lazykitchen.util.VideoItem;
 import com.google.gson.Gson;
 
@@ -53,6 +56,13 @@ public class CookFragment extends Fragment {
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         adapter = new Adapter(videoList);
+        adapter.setRecyclerItemClickListener(new OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(int Position, List<VideoItem> videoItemList) {
+                Intent intent = new Intent(getActivity(), VideoActivity.class);
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(adapter);
         return view;
     }

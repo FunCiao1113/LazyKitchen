@@ -33,6 +33,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder> {
     private View inflater;
     myViewHolder myViewHolder;
 
+    private OnRecyclerItemClickListener monItemClickListener;
+
+    public void setRecyclerItemClickListener(OnRecyclerItemClickListener listener) {
+        monItemClickListener = listener;
+    }
+
     public Adapter(List<VideoItem> videoList) {
         list = videoList;
     }
@@ -43,16 +49,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder> {
 
     @NonNull
     @Override
-    public myViewHolder onCreateViewHolder( @NotNull ViewGroup parent, int viewType) {
-        inflater = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_item,parent,false);
+    public myViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+        inflater = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_item, parent, false);
         myViewHolder = new myViewHolder(inflater);
         return myViewHolder;
     }
 
     @Override
-    public void onBindViewHolder( @NotNull myViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull myViewHolder holder, int position) {
         VideoItem videoItem = list.get(position);
-        Uri url=Uri.parse(videoItem.getCoverUrl());
+        Uri url = Uri.parse(videoItem.getCoverUrl());
         RequestOptions options = new RequestOptions()
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.baseline_edit_off_red_300_24dp)
@@ -67,13 +73,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder> {
     }
 
 
-
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    class myViewHolder extends RecyclerView.ViewHolder{
+    class myViewHolder extends RecyclerView.ViewHolder {
         View videoView;
         ImageView videoImage;
         TextView videoName;
@@ -83,6 +88,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myViewHolder> {
             videoView = itemView;
             videoImage = itemView.findViewById(R.id.imageView);
             videoName = itemView.findViewById(R.id.textView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (monItemClickListener != null) {
+                        monItemClickListener.onItemClick(getAdapterPosition(), list);
+                    }
+                }
+
+            });
         }
     }
 }
