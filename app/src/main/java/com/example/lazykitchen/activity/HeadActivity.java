@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.util.FileProviderUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +96,7 @@ public class HeadActivity extends AppCompatActivity {
                             try {
                                 photoFile = createImageFile();
                             } catch (IOException ex) {
+                                ex.printStackTrace();
                             }
                             // Continue only if the File was successfully created
                             if (photoFile != null) {
@@ -108,7 +110,7 @@ public class HeadActivity extends AppCompatActivity {
                     case 1:
                         // 创建Intent，用于打开手机本地图库选择图片
                         Intent intent1 = new Intent(Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         // 启动intent打开本地图库
                         startActivityForResult(intent1, LOCAL_CROP);
                         break;
@@ -128,21 +130,38 @@ public class HeadActivity extends AppCompatActivity {
                     // 设置数据为文件uri，类型为图片格式
                     intent.setDataAndType(photoURI, "image/*");
                     // 允许裁剪
+                    intent.putExtra("crop", "true");
                     intent.putExtra("scale", true);
+
+                    intent.putExtra("aspectX", 1);
+                    intent.putExtra("aspectY", 1);
+                    intent.putExtra("outputX", 300);
+                    intent.putExtra("outputY", 300);
+                    intent.putExtra("return-data", false);
+
                     // 指定输出到文件uri中
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                    intent.putExtra("noFaceDetection", true); // no face detection
+
+                    // 授予intent读写权限
+                    FileProviderUtils.grantUriPermission(this,intent,photoURI);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                     // 启动intent，开始裁剪
                     startActivityForResult(intent, CROP_PHOTO);
                 }
                 break;
             case LOCAL_CROP:// 系统图库
                 if (resultCode == RESULT_OK) {
+                    // 边界逻辑 拍照图片uri刷新为空
+                    setPhotoURI(null);
                     // 创建intent用于裁剪图片
                     Intent intent1 = new Intent("com.android.camera.action.CROP");
                     // 获取图库所选图片的uri
                     Uri uri = data.getData();
                     intent1.putExtra("crop", "true");
-                    intent1.putExtra("scale", "true");
+                    intent1.putExtra("scale", true);
                     intent1.setDataAndType(uri, "image/*");
                     //  设置裁剪图片的宽高
                     intent1.putExtra("outputX", 300);
@@ -169,7 +188,8 @@ public class HeadActivity extends AppCompatActivity {
                             imageView.setImageBitmap(bitmap);
                         }
                         // 展示图库中选择裁剪后的图片
-                        if (data != null) {
+                        // 裁剪成功不能直接进入此逻辑
+                        else if (data != null) {
                             // 根据返回的data，获取Bitmap对象
                             Bitmap bitmap = data.getExtras().getParcelable("data");
                             // 展示图片
@@ -181,5 +201,9 @@ public class HeadActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    public void setPhotoURI(Uri uri){
+        photoURI=uri;
     }
 }
