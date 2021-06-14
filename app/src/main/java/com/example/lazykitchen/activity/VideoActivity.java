@@ -1,6 +1,8 @@
 package com.example.lazykitchen.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Bundle;
 import android.widget.MediaController;
@@ -8,24 +10,38 @@ import android.widget.VideoView;
 
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.ActivityUtils;
+import com.example.lazykitchen.util.Adapter;
+import com.example.lazykitchen.util.VideoItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
 
+    private List<VideoItem> videoList = new ArrayList<>();
+    Adapter adapter;
+    RecyclerView recyclerView;
     private VideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        ActivityUtils.add(this.getClass().getSimpleName(),this);
+        recyclerView = findViewById(R.id.recommend);
         initVideoView();
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        Adapter adapter = new Adapter(videoList);
+        recyclerView.setAdapter(adapter);
+
     }
 
     private void initVideoView() {
-        videoView = findViewById(R.id.video_view);
-        MediaController mediaController=new MediaController(this);
-        videoView.setMediaController(mediaController);
-        videoView.setVideoPath("https://outin-a57d677ab0aa11ebbe1400163e1c35d5.oss-cn-shanghai.aliyuncs.com/sv/22c94c36-17950bbb43c/22c94c36-17950bbb43c.mp4?Expires=1620979788&OSSAccessKeyId=LTAI4FfD63zoqnm6ckiBFfXZ&Signature=y2T0eybF1GO66ebwpGLPJYSSgmA%3D");
-        videoView.start();
+        for (int i = 0; i < 8; i++) {
+            //VideoItem video1 = new VideoItem("111", R.mipmap.ic_launcher);
+            //videoList.add(video1);
+            //VideoItem video2 = new VideoItem("222", R.mipmap.ic_launcher);
+            //videoList.add(video2);
+        }
     }
 }
