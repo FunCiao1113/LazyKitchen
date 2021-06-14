@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.activity.HeadActivity;
@@ -30,11 +31,23 @@ import com.example.lazykitchen.util.AdapterDay;
 import com.example.lazykitchen.util.AdapterWeek;
 import com.example.lazykitchen.util.BadgeItem;
 import com.example.lazykitchen.util.DateUtil;
+import com.example.lazykitchen.util.GsonUtils;
+import com.example.lazykitchen.util.VideoItem;
+import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class PersonFragment extends Fragment {
 
@@ -45,6 +58,8 @@ public class PersonFragment extends Fragment {
     private List<BadgeItem> badgeItems = new ArrayList<>();
     AdapterDay adapterDay;
     Calendar calendar = Calendar.getInstance(Locale.CHINA);
+    String signInInfoUrl="http://47.100.4.109:8080/sign_in_info";
+    String signInUrl="http://47.100.4.109:8080/sign_in";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -118,11 +133,106 @@ public class PersonFragment extends Fragment {
         int blank = dateUtil.getWhichDay();
         for(int i=1;i<blank;i++)
             dayItem.add("");
-        for(int i=1;i<=days;i++)
-            if(i<10)
-                dayItem.add("0"+i);
+        for(int i=1;i<=days;i++) {
+            if (i < 10)
+                dayItem.add("0" + i);
             else
-                dayItem.add(""+i);
+                dayItem.add("" + i);
+        }
+        loadSignInInfo();
+    }
+
+    private void loadSignInInfo() {
+        OkHttpClient client = new OkHttpClient();
+        long id=1;
+        int month=6;
+        signInInfoUrl=signInInfoUrl+"?id="+id+"&month="+month;
+        Request request = new Request.Builder()
+                .url(signInInfoUrl)
+                .get()
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //...
+                getActivity().runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "获取签到信息失败！", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Gson gson=new Gson();
+                    Map map=gson.fromJson(response.body().string(),Map.class);
+                    System.out.println(map.get("table").toString());
+                    //处理UI需要切换到UI线程处理
+                    getActivity().runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            // 更新逻辑写在这里
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // 点击签到按钮后调用
+    private void signIn() {
+        OkHttpClient client = new OkHttpClient();
+        long id=1;
+        FormBody.Builder builder=new FormBody.Builder();
+        builder.add("id", String.valueOf(id));
+        FormBody body=builder.build();
+        Request request = new Request.Builder()
+                .url(signInUrl)
+                .post(body)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //...
+                getActivity().runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "签到失败！", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Gson gson=new Gson();
+                    Map map=gson.fromJson(response.body().string(),Map.class);
+                    // code=0->成功 code=-1->失败
+                    System.out.println(map.get("code").toString());
+                    //处理UI需要切换到UI线程处理
+                    getActivity().runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            // 更新逻辑写在这里
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
