@@ -6,6 +6,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -32,6 +36,24 @@ public class VideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+        int widthPixels = outMetrics.widthPixels;
+        int heightPixels = outMetrics.heightPixels;
+        System.out.println("widthPixels = " + widthPixels + ",heightPixels = " + heightPixels);
+        // 添加自适应方法
+        /*
+
+
+         */
+        ImageButton share = findViewById(R.id.finish);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(VideoActivity.this,ShareActivity.class);
+                startActivity(intent);
+            }
+        });
         intent = getIntent();
         recyclerView = findViewById(R.id.recommend);
         initExtras();
@@ -39,7 +61,7 @@ public class VideoActivity extends AppCompatActivity {
         initVideoListView();
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
-        Adapter adapter = new Adapter(videoList);
+        adapter = new Adapter(videoList);
         recyclerView.setAdapter(adapter);
     }
 
