@@ -33,6 +33,7 @@ import com.example.lazykitchen.util.AdapterWeek;
 import com.example.lazykitchen.util.BadgeItem;
 import com.example.lazykitchen.util.DateUtil;
 import com.example.lazykitchen.util.GsonUtils;
+import com.example.lazykitchen.util.MyGridView;
 import com.example.lazykitchen.util.VideoItem;
 import com.google.gson.Gson;
 
@@ -58,7 +59,7 @@ public class PersonFragment extends Fragment {
     private TextView record;
     private Button signIn;
     private int cnt=0;
-    private GridView day;
+    private MyGridView day;
     final String[] weekItem={"日","一","二","三","四","五","六"};
     private List<String> dayItem = new ArrayList<String>();
     private ArrayList<Boolean> flag = new ArrayList<>();
@@ -129,7 +130,7 @@ public class PersonFragment extends Fragment {
         });
         RecyclerView recyclerView = view.findViewById(R.id.achievement);
         initialBadge();
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         AdapterBadge adapterBadge = new AdapterBadge(badgeItems);
         recyclerView.setAdapter(adapterBadge);
