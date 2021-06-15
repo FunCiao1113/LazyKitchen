@@ -66,6 +66,8 @@ public class SkillFragment extends Fragment {
                 intent.putExtra("video_name",videoItemList.get(position).getMaterialName());
                 intent.putExtra("play_url",videoItemList.get(position).getPlayUrl());
                 intent.putExtra("description",videoItemList.get(position).getDescription());
+                intent.putExtra("width",videoItemList.get(position).getWidth());
+                intent.putExtra("height",videoItemList.get(position).getHeight());
                 startActivity(intent);
             }
         });
