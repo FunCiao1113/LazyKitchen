@@ -67,18 +67,6 @@ public class HeadActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.headImage);
     }
 
-    private void setListeners() {
-
-        // 展示图片按钮点击事件
-        change.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takePhotoOrSelectPicture();// 拍照或者调用图库
-            }
-        });
-
-    }
-
     private void takePhotoOrSelectPicture() {
         CharSequence[] items = {"拍照", "图库"};// 裁剪items选项
         // 弹出对话框提示用户拍照或者是通过本地图库选择图片
