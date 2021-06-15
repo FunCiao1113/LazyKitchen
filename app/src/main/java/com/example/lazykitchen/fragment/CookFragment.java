@@ -58,8 +58,13 @@ public class CookFragment extends Fragment {
         adapter = new Adapter(videoList);
         adapter.setRecyclerItemClickListener(new OnRecyclerItemClickListener() {
             @Override
-            public void onItemClick(int Position, List<VideoItem> videoItemList) {
+            public void onItemClick(int position, List<VideoItem> videoItemList) {
                 Intent intent = new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("author_id",videoItemList.get(position).getAuthorId());
+                intent.putExtra("author_name",videoItemList.get(position).getAuthorName());
+                intent.putExtra("video_name",videoItemList.get(position).getMaterialName());
+                intent.putExtra("play_url",videoItemList.get(position).getPlayUrl());
+                intent.putExtra("description",videoItemList.get(position).getDescription());
                 startActivity(intent);
             }
         });
