@@ -35,7 +35,6 @@ public class HomeActivity extends AppCompatActivity {
 
     String userDataUrlPrefix="http://47.100.4.109:8080/user/info";
     Intent intent;
-    private String userID;
 
 
     @Override
@@ -86,6 +85,10 @@ public class HomeActivity extends AppCompatActivity {
                     // code=0->成功 code=-1->失败
                     String name=((Map)map.get("userInfo")).get("name").toString();
                     String sex=((Map)map.get("userInfo")).get("gender").toString();
+                    String id=(int)(double)(
+                            (
+                                    (Map)map.get("userInfo")
+                            ).get("id"))+"";
                     //处理UI需要切换到UI线程处理
                     runOnUiThread(new Runnable()
                     {
@@ -94,6 +97,7 @@ public class HomeActivity extends AppCompatActivity {
                         {
                             // 更新逻辑写在这里
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
+                            prefs.edit().putString("ID",id).apply();
                             prefs.edit().putString("name",name).apply();
                             String sexCode="2";
                             if(sex.equals("男")) {

@@ -3,11 +3,13 @@ package com.example.lazykitchen.fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -57,6 +59,7 @@ public class PersonFragment extends Fragment {
     private PersonViewModel mViewModel;
     private TextView yearAndMonth;
     private TextView record;
+    private TextView id;
     private Button signIn;
     private int cnt=0;
     private MyGridView day;
@@ -77,6 +80,9 @@ public class PersonFragment extends Fragment {
         System.out.println(calendar);
         initial(calendar);
         record = view.findViewById(R.id.record);
+        id=view.findViewById(R.id.id);
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        id.setText("ID:"+prefs.getString("ID","0001"));
         record.setText("该月已签到"+cnt+"天");
         GridView week = view.findViewById(R.id.week);
         AdapterWeek adapterWeek = new AdapterWeek(weekItem);
@@ -135,6 +141,18 @@ public class PersonFragment extends Fragment {
         AdapterBadge adapterBadge = new AdapterBadge(badgeItems);
         recyclerView.setAdapter(adapterBadge);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadUserName();
+    }
+
+    public void loadUserName(){
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.getString("name","厨房新人");
+
     }
 
     public void initialBadge(){
