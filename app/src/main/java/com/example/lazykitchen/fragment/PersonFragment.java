@@ -81,8 +81,7 @@ public class PersonFragment extends Fragment {
         initial(calendar);
         record = view.findViewById(R.id.record);
         id=view.findViewById(R.id.id);
-        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        id.setText("ID:"+prefs.getString("ID","0001"));
+        loadIdAndUserName();
         record.setText("该月已签到"+cnt+"天");
         GridView week = view.findViewById(R.id.week);
         AdapterWeek adapterWeek = new AdapterWeek(weekItem);
@@ -146,13 +145,13 @@ public class PersonFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadUserName();
+        loadIdAndUserName();
     }
 
-    public void loadUserName(){
+    public void loadIdAndUserName(){
         SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.getString("name","厨房新人");
-
+        id.setText("ID:"+prefs.getString("ID","0001")+"\n\n"+
+                "用户名:"+prefs.getString("name","厨房新人"));
     }
 
     public void initialBadge(){
