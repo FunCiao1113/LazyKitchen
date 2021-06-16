@@ -25,18 +25,13 @@ import android.widget.Toast;
 
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.activity.HeadActivity;
-import com.example.lazykitchen.activity.HomeActivity;
-import com.example.lazykitchen.activity.LoginActivity;
 import com.example.lazykitchen.activity.SettingsActivity;
-import com.example.lazykitchen.activity.VerifyActivity;
 import com.example.lazykitchen.util.AdapterBadge;
 import com.example.lazykitchen.util.AdapterDay;
 import com.example.lazykitchen.util.AdapterWeek;
 import com.example.lazykitchen.util.BadgeItem;
 import com.example.lazykitchen.util.DateUtil;
-import com.example.lazykitchen.util.GsonUtils;
 import com.example.lazykitchen.util.MyGridView;
-import com.example.lazykitchen.util.VideoItem;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -135,7 +130,7 @@ public class PersonFragment extends Fragment {
         });
         RecyclerView recyclerView = view.findViewById(R.id.achievement);
         initialBadge();
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         AdapterBadge adapterBadge = new AdapterBadge(badgeItems);
         recyclerView.setAdapter(adapterBadge);
@@ -156,7 +151,7 @@ public class PersonFragment extends Fragment {
 
     public void initialBadge(){
         for(int i=0;i<8;i++){
-            BadgeItem badgeItem = new BadgeItem(R.drawable.ic_baseline_spa_24,""+i);
+            BadgeItem badgeItem = new BadgeItem(R.drawable.heianzhinv0,""+i);
             badgeItems.add(badgeItem);
         }
     }
