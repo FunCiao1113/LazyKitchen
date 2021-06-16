@@ -4,9 +4,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -16,14 +19,33 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.alibaba.sdk.android.vod.upload.VODUploadCallback;
+import com.alibaba.sdk.android.vod.upload.VODUploadClient;
+import com.alibaba.sdk.android.vod.upload.VODUploadClientImpl;
+import com.alibaba.sdk.android.vod.upload.model.UploadFileInfo;
+import com.alibaba.sdk.android.vod.upload.model.VodInfo;
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.FileProviderUtils;
+import com.example.lazykitchen.util.ImageUploadUtil;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class HeadActivity extends AppCompatActivity {
 
@@ -31,15 +53,23 @@ public class HeadActivity extends AppCompatActivity {
     private static final int CROP_PHOTO = 12;// 裁剪图片
     private static final int LOCAL_CROP = 13;// 本地图库
 
+    private static final String HEAD_CHANGE= "head_change";//头像更新
+
     private ImageView imageView;
     private Button change;
     private Uri photoURI;
+    VODUploadClient uploader;
+    String uploadTitle;
+    String uploadAuth;
+    String uploadAddress;
+    String uploadAddressAndAuthUrl="http://47.100.4.109:8080/user/head";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_head);
         setViews();// 初始化控件
+        uploaderInit();
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +192,7 @@ public class HeadActivity extends AppCompatActivity {
                 break;
             case CROP_PHOTO:// 裁剪后展示图片
                 if (resultCode == RESULT_OK) {
+                    Bitmap bitmap=null;
                     try {
                         // 展示拍照后裁剪的图片
                         if (photoURI != null) {
@@ -171,7 +202,7 @@ public class HeadActivity extends AppCompatActivity {
                             option.inSampleSize = 2;
                             option.inPreferredConfig = Bitmap.Config.RGB_565;
                             // 根据文件流解析生成Bitmap对象
-                            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoURI), null, option);
+                            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoURI), null, option);
                             // 展示图片
                             imageView.setImageBitmap(bitmap);
                         }
@@ -179,16 +210,136 @@ public class HeadActivity extends AppCompatActivity {
                         // 裁剪成功不能直接进入此逻辑
                         else if (data != null) {
                             // 根据返回的data，获取Bitmap对象
-                            Bitmap bitmap = data.getExtras().getParcelable("data");
+                            bitmap = data.getExtras().getParcelable("data");
                             // 展示图片
                             imageView.setImageBitmap(bitmap);
                         }
+                        File uploadPhotoFile = createImageFile();
+                        if(uploadPhotoFile.exists()){
+                            uploadPhotoFile.delete();}
+                        try {
+                            FileOutputStream fos = new FileOutputStream(uploadPhotoFile);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                            fos.flush();
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        uploadHead(uploadTitle,uploadPhotoFile);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 break;
         }
+    }
+
+
+    public void uploaderInit(){
+        uploader = new VODUploadClientImpl(getApplicationContext());
+        uploader.init(new VODUploadCallback() {
+            public void onUploadSucceed(UploadFileInfo info) {
+                //上传成功
+            }
+            public void onUploadFailed(UploadFileInfo info, String code, String message) {
+                //上传失败
+            }
+            public void onUploadProgress(UploadFileInfo info, long uploadedSize, long totalSize) {
+                //上传进度
+            }
+            public void onUploadTokenExpired() {
+                //上传凭证过期，需要调用刷新凭证接口。
+            }
+            public void onUploadRetry(String code, String message) {
+                //重试回调
+            }
+            public void onUploadRetryResume() {
+            }
+            public void onUploadStarted(UploadFileInfo uploadFileInfo) {
+                System.out.println("upload start");
+                getUploadAddressAndAuth();
+                try {
+                    while(uploadAddress==null){
+                        Thread.sleep(100);
+                    }
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                uploader.setUploadAuthAndAddress(uploadFileInfo, uploadAuth, uploadAddress);
+            }
+        });
+    }
+
+    public void uploadHead(String title,File photo){
+        String filePath = photo.getAbsolutePath();
+        VodInfo vodInfo = new VodInfo();
+        vodInfo.setTitle(title);
+        vodInfo.setDesc("");
+        vodInfo.setCateId(-1);
+        List<String> tags=new ArrayList<>();
+        tags.add("tag1");
+        vodInfo.setTags(tags);
+        uploader.addFile(filePath,vodInfo);
+        uploader.start();
+    }
+
+    public void getUploadAddressAndAuth(){
+        OkHttpClient client = new OkHttpClient();
+        FormBody.Builder builder=new FormBody.Builder();
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
+        String id=prefs.getString("ID","1");
+        builder.add("id", String.valueOf(id));
+        FormBody body=builder.build();
+        Request request = new Request.Builder()
+                .url(uploadAddressAndAuthUrl)
+                .post(body)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //...
+                runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast toast = Toast.makeText(HeadActivity.this, "签到失败！", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Gson gson=new Gson();
+                    Map map=gson.fromJson(response.body().string(),Map.class);
+                    System.out.println(map.get("title").toString());
+                    System.out.println(map.get("uploadAddress").toString());
+                    System.out.println(map.get("uploadAuth").toString());
+                    System.out.println(map.get("imageUrl").toString());
+
+                    uploadTitle=map.get("title").toString();
+                    uploadAddress=map.get("uploadAddress").toString();
+                    uploadAuth=map.get("uploadAuth").toString();
+                    String uploadImageUri = map.get("imageUrl").toString();
+
+                    //处理UI需要切换到UI线程处理
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Toast.makeText(HeadActivity.this,"签到成功", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(HEAD_CHANGE);
+                            intent.putExtra("imageUrl", uploadImageUri);
+                            LocalBroadcastManager.getInstance(HeadActivity.this).sendBroadcast(intent);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public void setPhotoURI(Uri uri){
