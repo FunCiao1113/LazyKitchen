@@ -48,12 +48,12 @@ public class ShareFragment extends Fragment {
     }
 
     private void initial(){
-        photos = new ArrayList<>();
+        photos = new ArrayList<>();/*
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
-        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));*/
         pyqItems = new ArrayList<>();
         pyqItems.add(new PyqItem("1111","11111","2020.1.1",R.drawable.ic_baseline_collections_bookmark_24,photos));
         pyqItems.add(new PyqItem("2222","22222","2020.1.1",R.drawable.ic_baseline_collections_bookmark_24,photos));
