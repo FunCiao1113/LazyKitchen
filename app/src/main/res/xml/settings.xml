@@ -6,9 +6,9 @@
             android:key="name"
             android:title="昵称" />
         <ListPreference
-            android:entries="@array/sex"
             android:key="sex"
             android:title="性别"
+            android:entries="@array/sex"
             app:entryValues="@array/sex_value" />
     </PreferenceCategory>
 </PreferenceScreen>
