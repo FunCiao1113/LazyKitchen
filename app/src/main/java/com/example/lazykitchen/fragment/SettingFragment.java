@@ -46,8 +46,8 @@ public class SettingFragment extends PreferenceFragmentCompat implements Prefere
         sexPreference.setOnPreferenceChangeListener(this);
 
         SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //namePreference.setSummary(prefs.getString("name","厨房新人"));
-        //sexPreference.setSummary(sex[Integer.parseInt(prefs.getString("sex","2"))]);
+        namePreference.setSummary(prefs.getString("name","厨房新人"));
+        sexPreference.setSummary(sex[Integer.parseInt(prefs.getString("sex","2"))]);
     }
 
     @Override
@@ -61,9 +61,11 @@ public class SettingFragment extends PreferenceFragmentCompat implements Prefere
         String newSex = null;
         if(preference==namePreference){
             newName=(String) newValue;
+            //namePreference.setSummary(newName);
         }
         else if(preference==sexPreference){
             newSex=sex[Integer.parseInt((String) newValue)];
+            //sexPreference.setSummary(newSex);
         }
         updateUserInfo(newName,newSex);
         return true;
