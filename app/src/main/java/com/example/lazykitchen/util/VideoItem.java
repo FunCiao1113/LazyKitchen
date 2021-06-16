@@ -32,12 +32,17 @@ public class VideoItem {
     @SerializedName("video_url")
     private String playUrl;
 
-    public VideoItem(int id, String authorId, String authorName, String description, String createAt, String materialId, String materialType, String materialName, String picUrl, String video_uri, String coverUrl, String playUrl) {
+    @SerializedName("width")
+    private long width;
+    @SerializedName("height")
+    private long height;
+
+    public VideoItem(int id, String authorId, String authorName, String description, String createTime, String materialId, String materialType, String materialName, String picUrl, String video_uri, String coverUrl, String playUrl, long width, long height) {
         this.id = id;
         this.authorId = authorId;
         this.authorName = authorName;
         this.description = description;
-        this.createTime = createAt;
+        this.createTime = createTime;
         this.materialId = materialId;
         this.materialType = materialType;
         this.materialName = materialName;
@@ -45,6 +50,24 @@ public class VideoItem {
         this.video_uri = video_uri;
         this.coverUrl = coverUrl;
         this.playUrl = playUrl;
+        this.width = width;
+        this.height = height;
+    }
+
+    public long getWidth() {
+        return width;
+    }
+
+    public void setWidth(long width) {
+        this.width = width;
+    }
+
+    public long getHeight() {
+        return height;
+    }
+
+    public void setHeight(long height) {
+        this.height = height;
     }
 
     public int getId() {

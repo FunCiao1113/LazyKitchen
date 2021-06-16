@@ -30,14 +30,15 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.tabs.TabLayout>
 
+
     <SearchView
         android:id="@+id/search"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:background="#ABCBED"
+        android:layout_height="55dp"
+        android:background="#1678ff"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.396"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

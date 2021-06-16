@@ -21,6 +21,10 @@ public class DateUtil {
         return calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月";
     }
 
+    public int getMonth() {
+        return calendar.get(Calendar.MONTH) + 1;
+    }
+
     public int getNowDay() {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }

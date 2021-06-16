@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,12 +33,14 @@ import com.example.lazykitchen.util.AdapterWeek;
 import com.example.lazykitchen.util.BadgeItem;
 import com.example.lazykitchen.util.DateUtil;
 import com.example.lazykitchen.util.GsonUtils;
+import com.example.lazykitchen.util.MyGridView;
 import com.example.lazykitchen.util.VideoItem;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,12 +56,17 @@ public class PersonFragment extends Fragment {
 
     private PersonViewModel mViewModel;
     private TextView yearAndMonth;
+    private TextView record;
+    private Button signIn;
+    private int cnt=0;
+    private MyGridView day;
     final String[] weekItem={"日","一","二","三","四","五","六"};
     private List<String> dayItem = new ArrayList<String>();
+    private ArrayList<Boolean> flag = new ArrayList<>();
     private List<BadgeItem> badgeItems = new ArrayList<>();
     AdapterDay adapterDay;
     Calendar calendar = Calendar.getInstance(Locale.CHINA);
-    String signInInfoUrl="http://47.100.4.109:8080/sign_in_info";
+    String signInInfoUrlPrefix="http://47.100.4.109:8080/sign_in_info";
     String signInUrl="http://47.100.4.109:8080/sign_in";
 
     @Override
@@ -66,13 +74,14 @@ public class PersonFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.person_fragment, container, false);
         yearAndMonth = view.findViewById(R.id.yearAndMonth);
+        System.out.println(calendar);
         initial(calendar);
+        record = view.findViewById(R.id.record);
+        record.setText("该月已签到"+cnt+"天");
         GridView week = view.findViewById(R.id.week);
         AdapterWeek adapterWeek = new AdapterWeek(weekItem);
         week.setAdapter(adapterWeek);
-        GridView day = view.findViewById(R.id.day);
-        adapterDay = new AdapterDay(dayItem);
-        day.setAdapter(adapterDay);
+        day = view.findViewById(R.id.day);
         ImageButton settings = view.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,8 +105,9 @@ public class PersonFragment extends Fragment {
             public void onClick(View v) {
                 calendar.add(Calendar.MONTH,-1);
                 dayItem.clear();
+                flag.clear();
                 initial(calendar);
-                adapterDay.notifyDataSetChanged();
+                //adapterDay.notifyDataSetChanged();
             }
         });
         ImageButton right = view.findViewById(R.id.right);
@@ -106,13 +116,21 @@ public class PersonFragment extends Fragment {
             public void onClick(View v) {
                 calendar.add(Calendar.MONTH,1);
                 dayItem.clear();
+                flag.clear();
                 initial(calendar);
-                adapterDay.notifyDataSetChanged();
+                //adapterDay.notifyDataSetChanged();
+            }
+        });
+        signIn = view.findViewById(R.id.signIn);
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
             }
         });
         RecyclerView recyclerView = view.findViewById(R.id.achievement);
         initialBadge();
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         AdapterBadge adapterBadge = new AdapterBadge(badgeItems);
         recyclerView.setAdapter(adapterBadge);
@@ -139,14 +157,17 @@ public class PersonFragment extends Fragment {
             else
                 dayItem.add("" + i);
         }
-        loadSignInInfo();
+        loadSignInInfo(calendar);
     }
 
-    private void loadSignInInfo() {
+    private void loadSignInInfo(Calendar calendar) {
+        DateUtil dateUtil = new DateUtil(calendar);
         OkHttpClient client = new OkHttpClient();
         long id=1;
-        int month=6;
-        signInInfoUrl=signInInfoUrl+"?id="+id+"&month="+month;
+        int month=dateUtil.getMonth();
+        System.out.println(month);
+        String signInInfoUrl=signInInfoUrlPrefix+"?id="+id+"&month="+month;
+        System.out.println(signInInfoUrl);
         Request request = new Request.Builder()
                 .url(signInInfoUrl)
                 .get()
@@ -173,13 +194,22 @@ public class PersonFragment extends Fragment {
                     Gson gson=new Gson();
                     Map map=gson.fromJson(response.body().string(),Map.class);
                     System.out.println(map.get("table").toString());
+                    flag = (ArrayList<Boolean>) map.get("table");
+                    cnt = (int)((double) map.get("cnt"));
                     //处理UI需要切换到UI线程处理
                     getActivity().runOnUiThread(new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            // 更新逻辑写在这里
+                            Calendar tmp = Calendar.getInstance(Locale.CHINA);
+                            if(flag.get(tmp.get(Calendar.DAY_OF_MONTH)-1)){
+                                signIn.setText("已签到");
+                                signIn.setEnabled(false);
+                            }
+                            adapterDay = new AdapterDay(dayItem,flag);
+                            day.setAdapter(adapterDay);
+                            record.setText("该月已签到"+cnt+"天");
                         }
                     });
                 }
@@ -208,7 +238,7 @@ public class PersonFragment extends Fragment {
                     @Override
                     public void run()
                     {
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "签到失败！", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(getActivity(), "签到失败！", Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 });
@@ -219,7 +249,6 @@ public class PersonFragment extends Fragment {
                 if(response.isSuccessful()){
                     Gson gson=new Gson();
                     Map map=gson.fromJson(response.body().string(),Map.class);
-                    // code=0->成功 code=-1->失败
                     System.out.println(map.get("code").toString());
                     //处理UI需要切换到UI线程处理
                     getActivity().runOnUiThread(new Runnable()
@@ -227,7 +256,11 @@ public class PersonFragment extends Fragment {
                         @Override
                         public void run()
                         {
-                            // 更新逻辑写在这里
+                            signIn.setText("已签到");
+                            signIn.setEnabled(false);
+                            Toast.makeText(getActivity(),"签到成功", Toast.LENGTH_SHORT).show();
+                            dayItem.clear();
+                            initial(calendar);
                         }
                     });
                 }

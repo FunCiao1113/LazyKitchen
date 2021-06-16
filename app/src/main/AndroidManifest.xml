@@ -3,22 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.lazykitchen">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!--<uses-permission android:name="android.permission.CAMERA"/>-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <queries>
         <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE"/>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
-
         <intent>
-            <action android:name="android.media.action.VIDEO_CAPTURE"/>
+            <action android:name="android.media.action.VIDEO_CAPTURE" />
         </intent>
     </queries>
 
-<application
-
+    <application
         android:allowBackup="true"
         android:icon="@drawable/baseline_edit_off_red_300_24dp"
         android:label="@string/app_name"
@@ -27,16 +25,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LazyKitchen"
         android:usesCleartextTraffic="true">
-    <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="com.example.lazykitchen.fileprovider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/file_paths" />
-    </provider>
-        <activity android:name=".activity.HeadActivity"></activity>
+        <activity android:name=".activity.ShareActivity"></activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.lazykitchen.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity android:name=".activity.HeadActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.VideoActivity" />

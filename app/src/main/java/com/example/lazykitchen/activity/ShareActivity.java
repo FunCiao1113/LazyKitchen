@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,37 +17,72 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.util.AdapterPhoto;
 import com.example.lazykitchen.util.FileProviderUtils;
+import com.example.lazykitchen.util.PhotoItem;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class HeadActivity extends AppCompatActivity {
+public class ShareActivity extends AppCompatActivity {
 
     private static final int TAKE_PHOTO = 11;// 拍照
     private static final int CROP_PHOTO = 12;// 裁剪图片
     private static final int LOCAL_CROP = 13;// 本地图库
 
-    private ImageView imageView;
-    private Button change;
+    private ImageButton add;
     private Uri photoURI;
-
+    private RecyclerView recyclerView;
+    private List<PhotoItem> photos;
+    private Button submit;
+    private ImageButton cancel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_head);
-        setViews();// 初始化控件
-        change.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_share);
+        add = findViewById(R.id.add);
+        submit = findViewById(R.id.submit);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        cancel = findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        recyclerView = findViewById(R.id.pyqPhoto);
+        initial();
+        AdapterPhoto adapterPhoto = new AdapterPhoto(photos);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        recyclerView.setAdapter(adapterPhoto);
+        add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takePhotoOrSelectPicture();
             }
         });
+    }
+
+    private void initial() {
+        photos = new ArrayList<>();
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
     }
 
     private File createImageFile() throws IOException {
@@ -61,16 +98,10 @@ public class HeadActivity extends AppCompatActivity {
         return image;
     }
 
-
-    private void setViews() {
-        change = (Button) findViewById(R.id.change);
-        imageView = (ImageView) findViewById(R.id.headImage);
-    }
-
     private void takePhotoOrSelectPicture() {
         CharSequence[] items = {"拍照", "图库"};// 裁剪items选项
         // 弹出对话框提示用户拍照或者是通过本地图库选择图片
-        new AlertDialog.Builder(HeadActivity.this).setItems(items, new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(ShareActivity.this).setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
@@ -88,7 +119,7 @@ public class HeadActivity extends AppCompatActivity {
                             }
                             // Continue only if the File was successfully created
                             if (photoFile != null) {
-                                photoURI = FileProvider.getUriForFile(HeadActivity.this, "com.example.lazykitchen.fileprovider", photoFile);
+                                photoURI = FileProvider.getUriForFile(ShareActivity.this, "com.example.lazykitchen.fileprovider", photoFile);
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
                                 startActivityForResult(intent, TAKE_PHOTO);
                             }
@@ -106,7 +137,6 @@ public class HeadActivity extends AppCompatActivity {
             }
         }).show();
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -173,7 +203,7 @@ public class HeadActivity extends AppCompatActivity {
                             // 根据文件流解析生成Bitmap对象
                             Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoURI), null, option);
                             // 展示图片
-                            imageView.setImageBitmap(bitmap);
+                            //imageView.setImageBitmap(bitmap);
                         }
                         // 展示图库中选择裁剪后的图片
                         // 裁剪成功不能直接进入此逻辑
@@ -181,7 +211,7 @@ public class HeadActivity extends AppCompatActivity {
                             // 根据返回的data，获取Bitmap对象
                             Bitmap bitmap = data.getExtras().getParcelable("data");
                             // 展示图片
-                            imageView.setImageBitmap(bitmap);
+                            //imageView.setImageBitmap(bitmap);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -191,7 +221,7 @@ public class HeadActivity extends AppCompatActivity {
         }
     }
 
-    public void setPhotoURI(Uri uri){
-        photoURI=uri;
+    public void setPhotoURI(Uri uri) {
+        photoURI = uri;
     }
 }

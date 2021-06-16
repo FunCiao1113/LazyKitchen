@@ -35,6 +35,8 @@ public class HomeActivity extends AppCompatActivity {
 
     String userDataUrlPrefix="http://47.100.4.109:8080/user/info";
     Intent intent;
+    private String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

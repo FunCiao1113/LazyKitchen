@@ -2,6 +2,7 @@ package com.example.lazykitchen.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,8 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.activity.VideoActivity;
 import com.example.lazykitchen.util.Adapter;
 import com.example.lazykitchen.util.GsonUtils;
+import com.example.lazykitchen.util.OnRecyclerItemClickListener;
 import com.example.lazykitchen.util.VideoItem;
 import com.google.gson.Gson;
 
@@ -54,6 +57,20 @@ public class SkillFragment extends Fragment {
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         adapter=new Adapter(videoList);
+        adapter.setRecyclerItemClickListener(new OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(int position, List<VideoItem> videoItemList) {
+                Intent intent = new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("author_id",videoItemList.get(position).getAuthorId());
+                intent.putExtra("author_name",videoItemList.get(position).getAuthorName());
+                intent.putExtra("video_name",videoItemList.get(position).getMaterialName());
+                intent.putExtra("play_url",videoItemList.get(position).getPlayUrl());
+                intent.putExtra("description",videoItemList.get(position).getDescription());
+                intent.putExtra("width",videoItemList.get(position).getWidth());
+                intent.putExtra("height",videoItemList.get(position).getHeight());
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(adapter);
         return view;
     }

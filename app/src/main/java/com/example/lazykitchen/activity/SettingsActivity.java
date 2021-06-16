@@ -5,6 +5,7 @@ import androidx.preference.Preference;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
@@ -23,5 +24,6 @@ public class SettingsActivity extends AppCompatActivity {
                     .add(R.id.container, SettingFragment.class, null)
                     .commit();
         }
+
     }
 }
