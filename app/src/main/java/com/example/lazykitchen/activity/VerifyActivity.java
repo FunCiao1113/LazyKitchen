@@ -126,6 +126,7 @@ public class VerifyActivity extends AppCompatActivity {
                                 Toast toast = Toast.makeText(VerifyActivity.this, "验证成功！", Toast.LENGTH_SHORT);
                                 toast.show();
                                 Intent intent = new Intent(VerifyActivity.this,HomeActivity.class);
+                                intent.putExtra("phone",phone);
                                 startActivity(intent);
                                 ActivityUtils.destory("LoginActivity");
                                 ActivityUtils.destory("VerifyActivity");
