@@ -7,8 +7,10 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,6 +20,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.AdapterPhoto;
@@ -25,7 +28,10 @@ import com.example.lazykitchen.util.FileProviderUtils;
 import com.example.lazykitchen.util.PhotoItem;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,18 +77,25 @@ public class ShareActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePhotoOrSelectPicture();
+                if(photos.size()<9) {
+                    takePhotoOrSelectPicture();
+                }
+                else{
+                    Toast toast = Toast.makeText(ShareActivity.this, "最多上传9张图片", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         });
     }
 
     private void initial() {
         photos = new ArrayList<>();
+        /*
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
         photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
-        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));
+        photos.add(new PhotoItem(R.drawable.ic_baseline_camera_24));*/
     }
 
     private File createImageFile() throws IOException {
@@ -143,35 +156,18 @@ public class ShareActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:// 拍照
                 if (resultCode == RESULT_OK) {
-                    // 创建intent用于裁剪图片
-                    Intent intent = new Intent("com.android.camera.action.CROP");
-                    // 设置数据为文件uri，类型为图片格式
-                    intent.setDataAndType(photoURI, "image/*");
-                    // 允许裁剪
-                    intent.putExtra("crop", "true");
-                    intent.putExtra("scale", true);
-
-                    intent.putExtra("aspectX", 1);
-                    intent.putExtra("aspectY", 1);
-                    intent.putExtra("outputX", 300);
-                    intent.putExtra("outputY", 300);
-                    intent.putExtra("return-data", false);
-
-                    // 指定输出到文件uri中
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-                    intent.putExtra("noFaceDetection", true); // no face detection
-
-                    // 授予intent读写权限
-                    FileProviderUtils.grantUriPermission(this,intent,photoURI);
-                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                    // 启动intent，开始裁剪
-                    startActivityForResult(intent, CROP_PHOTO);
+                    // 拍照photo加入recycleView
+                    PhotoItem photo=new PhotoItem(photoURI,null);
+                    photos.add(photo);
                 }
                 break;
             case LOCAL_CROP:// 系统图库
                 if (resultCode == RESULT_OK) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE);// Explain to the user why we need to read the contacts
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+                    }
                     // 边界逻辑 拍照图片uri刷新为空
                     setPhotoURI(null);
                     // 创建intent用于裁剪图片
@@ -182,36 +178,22 @@ public class ShareActivity extends AppCompatActivity {
                     intent1.putExtra("scale", true);
                     intent1.setDataAndType(uri, "image/*");
                     //  设置裁剪图片的宽高
-                    intent1.putExtra("outputX", 300);
-                    intent1.putExtra("outputY", 300);
+                    intent1.putExtra("outputX", 480);
+                    intent1.putExtra("outputY", 480);
                     // 裁剪后返回数据
                     intent1.putExtra("return-data", true);
                     // 启动intent，开始裁剪
                     startActivityForResult(intent1, CROP_PHOTO);
                 }
                 break;
-            case CROP_PHOTO:// 裁剪后展示图片
+             case CROP_PHOTO:// 系统图库裁剪后展示图片
                 if (resultCode == RESULT_OK) {
                     try {
-                        // 展示拍照后裁剪的图片
-                        if (photoURI != null) {
-                            // 创建BitmapFactory.Options对象
-                            BitmapFactory.Options option = new BitmapFactory.Options();
-                            // 属性设置，用于压缩bitmap对象
-                            option.inSampleSize = 2;
-                            option.inPreferredConfig = Bitmap.Config.RGB_565;
-                            // 根据文件流解析生成Bitmap对象
-                            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoURI), null, option);
-                            // 展示图片
-                            //imageView.setImageBitmap(bitmap);
-                        }
-                        // 展示图库中选择裁剪后的图片
-                        // 裁剪成功不能直接进入此逻辑
-                        else if (data != null) {
+                        if (data != null) {
                             // 根据返回的data，获取Bitmap对象
                             Bitmap bitmap = data.getExtras().getParcelable("data");
-                            // 展示图片
-                            //imageView.setImageBitmap(bitmap);
+                            PhotoItem photo=new PhotoItem(null,bitmap);
+                            photos.add(photo);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

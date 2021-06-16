@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.ShareActivity">
 
-    <TextView
+    <EditText
         android:id="@+id/wenan"
         android:layout_width="0dp"
         android:layout_height="131dp"
@@ -16,6 +16,7 @@
         android:background="@drawable/border"
         android:hint="这一刻的想法 ..."
         android:textSize="20sp"
+        android:gravity="top|left"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"

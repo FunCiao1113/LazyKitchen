@@ -35,7 +35,11 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
     @Override
     public void onBindViewHolder(@NonNull @NotNull PhotoViewHolder holder, int position) {
         PhotoItem photoItem = photos.get(position);
-        holder.imageView.setImageResource(photoItem.getPhotoId());
+        if(photoItem.getPhotoUrl()!=null) {
+            holder.imageView.setImageURI(photoItem.getPhotoUrl());
+        }else if(photoItem.getBitmap()!=null){
+            holder.imageView.setImageBitmap(photoItem.getBitmap());
+        }
     }
 
     @Override
