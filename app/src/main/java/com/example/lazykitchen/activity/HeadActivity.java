@@ -28,7 +28,6 @@ import com.alibaba.sdk.android.vod.upload.model.UploadFileInfo;
 import com.alibaba.sdk.android.vod.upload.model.VodInfo;
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.FileProviderUtils;
-import com.example.lazykitchen.util.ImageUploadUtil;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -93,8 +92,8 @@ public class HeadActivity extends AppCompatActivity {
 
 
     private void setViews() {
-        change = (Button) findViewById(R.id.change);
-        imageView = (ImageView) findViewById(R.id.headImage);
+        change = findViewById(R.id.change);
+        imageView = findViewById(R.id.headImage);
     }
 
     private void takePhotoOrSelectPicture() {
