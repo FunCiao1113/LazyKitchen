@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="厨房"
+          android:id="@+id/searchFragment"
+          android:icon="@drawable/ic_baseline_collections_bookmark_24"/>
+    <item android:title="餐厅"
+          android:id="@+id/shareFragment"
+          android:icon="@drawable/ic_baseline_camera_24"/>
+    <item android:title="冰箱"
+          android:id="@+id/personFragment"
+          android:icon="@drawable/ic_baseline_face_24"/>
+</menu>
