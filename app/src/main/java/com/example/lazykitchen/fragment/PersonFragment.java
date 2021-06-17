@@ -2,13 +2,18 @@ package com.example.lazykitchen.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -23,6 +28,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.vod.upload.VODUploadCallback;
+import com.alibaba.sdk.android.vod.upload.VODUploadClient;
+import com.alibaba.sdk.android.vod.upload.VODUploadClientImpl;
+import com.alibaba.sdk.android.vod.upload.model.UploadFileInfo;
+import com.alibaba.sdk.android.vod.upload.model.VodInfo;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.activity.HeadActivity;
 import com.example.lazykitchen.activity.SettingsActivity;
@@ -37,7 +50,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,7 +66,8 @@ public class PersonFragment extends Fragment {
     private PersonViewModel mViewModel;
     private TextView yearAndMonth;
     private TextView record;
-    private TextView id;
+    private TextView idView;
+    private ImageView imageView;
     private Button signIn;
     private int cnt=0;
     private MyGridView day;
@@ -66,6 +79,36 @@ public class PersonFragment extends Fragment {
     Calendar calendar = Calendar.getInstance(Locale.CHINA);
     String signInInfoUrlPrefix="http://47.100.4.109:8080/sign_in_info";
     String signInUrl="http://47.100.4.109:8080/sign_in";
+    LocalBroadcastManager broadcastManager;
+    LocalReceiver localReceiver;
+
+    private static final String HEAD_CHANGE= "head_change";//头像更新
+
+    class LocalReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "收到了本地发出的广播", Toast.LENGTH_SHORT).show();
+            Uri imageUrl = Uri.parse(intent.getStringExtra("imageUrl"));
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.baseline_edit_off_red_300_24dp)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(720, 720);
+            Glide.with(imageView.getContext())
+                    .load(imageUrl)
+                    .apply(options)
+                    .fitCenter()
+                    .into(imageView);
+        }
+    }
+
+    private void receiveHeadChange() {
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(HEAD_CHANGE);
+        localReceiver = new LocalReceiver();
+        broadcastManager.registerReceiver(localReceiver, intentFilter);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -75,8 +118,9 @@ public class PersonFragment extends Fragment {
         System.out.println(calendar);
         initial(calendar);
         record = view.findViewById(R.id.record);
-        id=view.findViewById(R.id.id);
+        idView =view.findViewById(R.id.id);
         loadIdAndUserName();
+        loadUserHead();
         record.setText("该月已签到"+cnt+"天");
         GridView week = view.findViewById(R.id.week);
         AdapterWeek adapterWeek = new AdapterWeek(weekItem);
@@ -90,7 +134,7 @@ public class PersonFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        ImageView imageView = view.findViewById(R.id.head_image);
+        imageView = view.findViewById(R.id.head_image);
         imageView.setImageResource(R.drawable.ic_baseline_face_24);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +178,7 @@ public class PersonFragment extends Fragment {
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         AdapterBadge adapterBadge = new AdapterBadge(badgeItems);
         recyclerView.setAdapter(adapterBadge);
+        receiveHeadChange();
         return view;
     }
 
@@ -141,12 +186,18 @@ public class PersonFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadIdAndUserName();
+        loadUserHead();
     }
 
     public void loadIdAndUserName(){
         SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        id.setText("ID:"+prefs.getString("ID","0001")+"\n\n"+
+        idView.setText("ID:"+prefs.getString("ID","0001")+"\n\n"+
                 "用户名:"+prefs.getString("name","厨房新人"));
+    }
+
+    public void loadUserHead(){
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String id=prefs.getString("ID","1");
     }
 
     public void initialBadge(){
@@ -286,5 +337,4 @@ public class PersonFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(PersonViewModel.class);
         // TODO: Use the ViewModel
     }
-
 }
