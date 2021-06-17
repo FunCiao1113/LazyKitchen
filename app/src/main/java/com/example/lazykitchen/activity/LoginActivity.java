@@ -11,15 +11,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.QuickContactBadge;
 import android.widget.Toast;
 
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.ActivityUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;

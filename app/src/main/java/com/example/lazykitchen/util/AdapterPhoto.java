@@ -1,5 +1,6 @@
 package com.example.lazykitchen.util;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,11 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
 
     public AdapterPhoto() {
         photos=new ArrayList<>();
+    }
+    private OnRecyclerPhotoClickListener monPhotoClickListener;
+
+    public void setRecyclerItemClickListener(OnRecyclerPhotoClickListener listener) {
+        monPhotoClickListener = listener;
     }
 
     public AdapterPhoto(List<PhotoItem> photos) {
@@ -87,6 +93,14 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
         public PhotoViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.photo);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (monPhotoClickListener != null) {
+                        monPhotoClickListener.onItemClick(getAdapterPosition(), photos);
+                    }
+                }
+            });
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,7 +24,9 @@ import com.bumptech.glide.RequestBuilder;
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.activity.HomeActivity;
 import com.example.lazykitchen.util.AdapterPhoto;
+import com.example.lazykitchen.activity.PhotoActivity;
 import com.example.lazykitchen.util.AdapterPyq;
+import com.example.lazykitchen.util.OnRecyclerPhotoClickListener;
 import com.example.lazykitchen.util.PhotoItem;
 import com.example.lazykitchen.util.PyqItem;
 import com.google.gson.Gson;

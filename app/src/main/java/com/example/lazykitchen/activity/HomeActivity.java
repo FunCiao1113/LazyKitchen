@@ -5,11 +5,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.EditTextPreference;
-import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,7 +16,6 @@ import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.ActivityUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.Map;
@@ -28,7 +24,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HomeActivity extends AppCompatActivity {
