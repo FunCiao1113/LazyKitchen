@@ -3,7 +3,6 @@ package com.example.lazykitchen.util;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,17 +16,42 @@ import com.example.lazykitchen.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterPyq extends RecyclerView.Adapter<AdapterPyq.PyqViewHolder>{
 
     List<PyqItem> pyqItems;
-    List<PhotoItem> photoItems;
     View inflater;
+    List<AdapterPhoto> multiAdapterPhoto;
 
-    public AdapterPyq(List<PyqItem> pyqItems, List<PhotoItem> photoItems) {
+    public AdapterPyq() {
+        pyqItems=new ArrayList<>();
+        multiAdapterPhoto=new ArrayList<>();
+    }
+
+    public List<PyqItem> getPyqItems() {
+        return pyqItems;
+    }
+
+    public void setPyqItems(List<PyqItem> pyqItems) {
         this.pyqItems = pyqItems;
-        this.photoItems = photoItems;
+    }
+
+    public List<AdapterPhoto> getMultiAdapterPhoto() {
+        return multiAdapterPhoto;
+    }
+
+    public void setMultiAdapterPhoto(List<AdapterPhoto> multiAdapterPhoto) {
+        this.multiAdapterPhoto = multiAdapterPhoto;
+    }
+
+    public void notifySon() {
+        if(multiAdapterPhoto==null||multiAdapterPhoto.size()==0)
+            return;
+        for(int i=0;i<multiAdapterPhoto.size();i++){
+            multiAdapterPhoto.get(i).notifyDataSetChanged();
+        }
     }
 
     @NonNull
@@ -45,11 +69,14 @@ public class AdapterPyq extends RecyclerView.Adapter<AdapterPyq.PyqViewHolder>{
         holder.content.setText(pyqItem.getContent());
         holder.date.setText(pyqItem.getDate());
         holder.title.setText(pyqItem.getTitle());
-        holder.imageView.setImageResource(pyqItem.getHeadId());
+        //holder.imageView.setImageResource(pyqItem.getHeadId());
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         holder.recyclerView.setLayoutManager(staggeredGridLayoutManager);
-        AdapterPhoto adapterPhoto = new AdapterPhoto(photoItems);
-        holder.recyclerView.setAdapter(adapterPhoto);
+        if(multiAdapterPhoto==null||multiAdapterPhoto.size()==0){
+            holder.recyclerView.setAdapter(new AdapterPhoto());
+        }else {
+            holder.recyclerView.setAdapter(new AdapterPhoto(pyqItems.get(position).getPhotos()));
+        }
     }
 
     @Override

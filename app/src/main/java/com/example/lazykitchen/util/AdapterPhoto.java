@@ -8,10 +8,14 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.lazykitchen.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHolder>{
@@ -19,7 +23,19 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
     List<PhotoItem> photos;
     View inflater;
 
+    public AdapterPhoto() {
+        photos=new ArrayList<>();
+    }
+
     public AdapterPhoto(List<PhotoItem> photos) {
+        this.photos = photos;
+    }
+
+    public List<PhotoItem> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<PhotoItem> photos) {
         this.photos = photos;
     }
 
@@ -36,7 +52,20 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
     public void onBindViewHolder(@NonNull @NotNull PhotoViewHolder holder, int position) {
         PhotoItem photoItem = photos.get(position);
         if(photoItem.getPhotoUrl()!=null) {
-            holder.imageView.setImageURI(photoItem.getPhotoUrl());
+            if(photoItem.getPhotoUrl().toString().startsWith("http")){
+                RequestOptions options = new RequestOptions()
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.baseline_edit_off_red_300_24dp)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .override(720, 720);
+                Glide.with(holder.imageView.getContext())
+                        .load(photoItem.getPhotoUrl())
+                        .apply(options)
+                        .fitCenter()
+                        .into(holder.imageView);
+            }else {
+                holder.imageView.setImageURI(photoItem.getPhotoUrl());
+            }
         }else if(photoItem.getBitmap()!=null){
             holder.imageView.setImageBitmap(photoItem.getBitmap());
         }
