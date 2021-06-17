@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -60,7 +61,8 @@ public class ShareActivity extends AppCompatActivity {
     String uploadTitle;
     String uploadAuth;
     String uploadAddress;
-    String uploadAddressAndAuthUrl="http://47.100.4.109:8080/article";
+    String submitUrl="http://47.100.4.109:8080/article";
+    String uploadAddressAndAuthUrl="http://47.100.4.109:8080/user/head";
 
     private static final int TAKE_PHOTO = 11;// 拍照
     private static final int CROP_PHOTO = 12;// 裁剪图片
@@ -72,19 +74,49 @@ public class ShareActivity extends AppCompatActivity {
     private List<PhotoItem> photos;
     private Button submit;
     private ImageButton cancel;
+    private EditText wenan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         add = findViewById(R.id.add);
         submit = findViewById(R.id.submit);
+        wenan = findViewById(R.id.wenan);
         uploaderInit();
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //上传
+                    try {
+                        for(int i =0;i<photos.size();i++) {
+                            Uri uri = photos.get(i).getPhotoUrl();
+                            File tmp = createImageFile();
+                            BitmapFactory.Options option = new BitmapFactory.Options();
+                            // 属性设置，用于压缩bitmap对象
+                            option.inSampleSize = 2;
+                            option.inPreferredConfig = Bitmap.Config.RGB_565;
+                            // 根据文件流解析生成Bitmap对象
+                            Bitmap bitmap;
+                            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, option);
+                            FileOutputStream fos = new FileOutputStream(tmp);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                            fos.flush();
+                            fos.close();
+                            VodInfo vodInfo = new VodInfo();
+                            vodInfo.setTitle(tmp.getName());
+                            vodInfo.setDesc("");
+                            vodInfo.setCateId(-1);
+                            List<String> tags=new ArrayList<>();
+                            tags.add("tag1");
+                            vodInfo.setTags(tags);
+                            uploader.addFile(tmp.getAbsolutePath(),vodInfo);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    uploader.start();
+                    submit();
+                }
 
-            }
         });
         cancel = findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -117,9 +149,12 @@ public class ShareActivity extends AppCompatActivity {
         uploader = new VODUploadClientImpl(getApplicationContext());
         uploader.init(new VODUploadCallback() {
             public void onUploadSucceed(UploadFileInfo info) {
+                System.out.println("upload ok"+info.getVodInfo().getTitle());
                 //上传成功
+
             }
             public void onUploadFailed(UploadFileInfo info, String code, String message) {
+                System.out.println("upload not ok"+message);
                 //上传失败
             }
             public void onUploadProgress(UploadFileInfo info, long uploadedSize, long totalSize) {
@@ -137,7 +172,7 @@ public class ShareActivity extends AppCompatActivity {
                 System.out.println("upload start");
                 getUploadAddressAndAuth();
                 try {
-                    while(uploadAddress==null){
+                    while(uploadAuth==null||uploadAddress==null){
                         Thread.sleep(100);
                     }
                 }catch (InterruptedException e) {
@@ -146,19 +181,6 @@ public class ShareActivity extends AppCompatActivity {
                 uploader.setUploadAuthAndAddress(uploadFileInfo, uploadAuth, uploadAddress);
             }
         });
-    }
-
-    public void uploadPhoto(String title,File photo){
-        String filePath = photo.getAbsolutePath();
-        VodInfo vodInfo = new VodInfo();
-        vodInfo.setTitle(title);
-        vodInfo.setDesc("");
-        vodInfo.setCateId(-1);
-        List<String> tags=new ArrayList<>();
-        tags.add("tag1");
-        vodInfo.setTags(tags);
-        uploader.addFile(filePath,vodInfo);
-        uploader.start();
     }
 
     public void getUploadAddressAndAuth(){
@@ -331,5 +353,68 @@ public class ShareActivity extends AppCompatActivity {
 
     public void setPhotoURI(Uri uri) {
         photoURI = uri;
+    }
+
+    public void submit(){
+        OkHttpClient client = new OkHttpClient();
+        FormBody.Builder builder=new FormBody.Builder();
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
+        String id = prefs.getString("ID","1");
+        String content = wenan.getText().toString();
+        builder.add("id", id);
+        builder.add("body",content);
+        ArrayList<String> photoUri = new ArrayList<>();
+        for(int i =0;i<photos.size();i++)
+            photoUri.add(photos.get(i).getPhotoUrl().toString());
+        builder.add("image_ids",new Gson().toJson(photoUri));
+        FormBody body=builder.build();
+        Request request = new Request.Builder()
+                .url(submitUrl)
+                .post(body)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //...
+                runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast toast = Toast.makeText(ShareActivity.this, "上传失败！", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Gson gson=new Gson();
+                    Map map=gson.fromJson(response.body().string(),Map.class);/*
+                    System.out.println(map.get("title").toString());
+                    System.out.println(map.get("uploadAddress").toString());
+                    System.out.println(map.get("uploadAuth").toString());
+                    System.out.println(map.get("imageUrl").toString());*/
+
+                    /*uploadTitle=map.get("title").toString();
+                    uploadAddress=map.get("uploadAddress").toString();
+                    uploadAuth=map.get("uploadAuth").toString();
+                    String uploadImageUri = map.get("imageUrl").toString();
+*/
+                    //处理UI需要切换到UI线程处理
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Toast.makeText(ShareActivity.this,"上传成功", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                }
+            }
+        });
     }
 }
