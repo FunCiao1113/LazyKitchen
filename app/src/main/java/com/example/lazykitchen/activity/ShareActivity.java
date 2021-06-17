@@ -34,6 +34,7 @@ import com.alibaba.sdk.android.vod.upload.model.VodInfo;
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.AdapterPhoto;
 import com.example.lazykitchen.util.FileProviderUtils;
+import com.example.lazykitchen.util.OnRecyclerPhotoClickListener;
 import com.example.lazykitchen.util.PhotoItem;
 import com.google.gson.Gson;
 
@@ -128,6 +129,14 @@ public class ShareActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.pyqPhoto);
         initial();
         AdapterPhoto adapterPhoto = new AdapterPhoto(photos);
+        adapterPhoto.setRecyclerItemClickListener(new OnRecyclerPhotoClickListener() {
+            @Override
+            public void onItemClick(int Position, List<PhotoItem> photoItems) {
+                Intent intent = new Intent(ShareActivity.this,PhotoActivity.class);
+                intent.putExtra("uri",photoItems.get(Position).getPhotoUrl());
+                startActivity(intent);
+            }
+        });
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         recyclerView.setAdapter(adapterPhoto);
