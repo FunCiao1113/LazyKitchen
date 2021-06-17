@@ -29,6 +29,7 @@ public class AdapterPyq extends RecyclerView.Adapter<AdapterPyq.PyqViewHolder>{
     public AdapterPyq(List<PyqItem> pyqItems, List<PhotoItem> photoItems) {
         this.pyqItems = pyqItems;
         this.photoItems = photoItems;
+        adapterPhoto = new AdapterPhoto(photoItems);
     }
 
     @NonNull
@@ -49,7 +50,6 @@ public class AdapterPyq extends RecyclerView.Adapter<AdapterPyq.PyqViewHolder>{
         holder.imageView.setImageResource(pyqItem.getHeadId());
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         holder.recyclerView.setLayoutManager(staggeredGridLayoutManager);
-        adapterPhoto = new AdapterPhoto(photoItems);
         holder.recyclerView.setAdapter(adapterPhoto);
     }
 
