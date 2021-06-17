@@ -3,6 +3,7 @@ package com.example.lazykitchen.fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.lazykitchen.R;
+import com.example.lazykitchen.activity.PhotoActivity;
 import com.example.lazykitchen.util.AdapterPyq;
+import com.example.lazykitchen.util.OnRecyclerPhotoClickListener;
 import com.example.lazykitchen.util.PhotoItem;
 import com.example.lazykitchen.util.PyqItem;
 
@@ -43,6 +46,14 @@ public class ShareFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         initial();
         AdapterPyq adapterPyq = new AdapterPyq(pyqItems,photos);
+        adapterPyq.adapterPhoto.setRecyclerItemClickListener(new OnRecyclerPhotoClickListener() {
+            @Override
+            public void onItemClick(int Position, List<PhotoItem> photoItems) {
+                Intent intent = new Intent(getActivity(), PhotoActivity.class);
+                intent.putExtra("uri",photoItems.get(Position).getPhotoUrl());
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(adapterPyq);
         return view;
     }
