@@ -35,6 +35,7 @@ import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.AdapterPhoto;
 import com.example.lazykitchen.util.FileProviderUtils;
 import com.example.lazykitchen.util.PhotoItem;
+import com.example.lazykitchen.util.UploadInfo;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -45,29 +46,32 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ShareActivity extends AppCompatActivity {
 
     VODUploadClient uploader;
     String uploadTitle;
-    String uploadAuth;
-    String uploadAddress;
-    String submitUrl="http://47.100.4.109:8080/article";
-    String uploadAddressAndAuthUrl="http://47.100.4.109:8080/user/head";
+    HashMap<String,UploadInfo> uploadMap;
+    ArrayList<String> uploadImageIds;
+    String submitUrl="http://47.100.4.109:8080/article/publish";
+    String uploadAddressAndAuthUrl="http://47.100.4.109:8080/article/photo";
 
     private static final int TAKE_PHOTO = 11;// 拍照
     private static final int CROP_PHOTO = 12;// 裁剪图片
     private static final int LOCAL_CROP = 13;// 本地图库
-
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private ImageButton add;
     private Uri photoURI;
     private RecyclerView recyclerView;
@@ -75,6 +79,7 @@ public class ShareActivity extends AppCompatActivity {
     private Button submit;
     private ImageButton cancel;
     private EditText wenan;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,11 +114,11 @@ public class ShareActivity extends AppCompatActivity {
                             tags.add("tag1");
                             vodInfo.setTags(tags);
                             uploader.addFile(tmp.getAbsolutePath(),vodInfo);
+                            uploader.start();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    uploader.start();
                     submit();
                 }
 
@@ -151,7 +156,6 @@ public class ShareActivity extends AppCompatActivity {
             public void onUploadSucceed(UploadFileInfo info) {
                 System.out.println("upload ok"+info.getVodInfo().getTitle());
                 //上传成功
-
             }
             public void onUploadFailed(UploadFileInfo info, String code, String message) {
                 System.out.println("upload not ok"+message);
@@ -170,25 +174,24 @@ public class ShareActivity extends AppCompatActivity {
             }
             public void onUploadStarted(UploadFileInfo uploadFileInfo) {
                 System.out.println("upload start");
-                getUploadAddressAndAuth();
+                String title=uploadFileInfo.getVodInfo().getTitle();
+                getUploadAddressAndAuth(uploadFileInfo.getVodInfo().getTitle());
                 try {
-                    while(uploadAuth==null||uploadAddress==null){
+                    while(uploadMap.get(uploadFileInfo.getVodInfo().getTitle())==null){
                         Thread.sleep(100);
                     }
                 }catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                uploader.setUploadAuthAndAddress(uploadFileInfo, uploadAuth, uploadAddress);
+                uploader.setUploadAuthAndAddress(uploadFileInfo, uploadMap.get(title).getUploadAuth(), uploadMap.get(title).getUploadAddress());
             }
         });
     }
 
-    public void getUploadAddressAndAuth(){
+    public void getUploadAddressAndAuth(String title){
         OkHttpClient client = new OkHttpClient();
         FormBody.Builder builder=new FormBody.Builder();
-        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
-        String id=prefs.getString("ID","1");
-        builder.add("id", String.valueOf(id));
+        builder.add("filename", title);
         FormBody body=builder.build();
         Request request = new Request.Builder()
                 .url(uploadAddressAndAuthUrl)
@@ -221,9 +224,9 @@ public class ShareActivity extends AppCompatActivity {
                     System.out.println(map.get("imageUrl").toString());
 
                     uploadTitle=map.get("title").toString();
-                    uploadAddress=map.get("uploadAddress").toString();
-                    uploadAuth=map.get("uploadAuth").toString();
-                    String uploadImageUri = map.get("imageUrl").toString();
+                    uploadImageIds.add(map.get("imageId").toString());
+                    UploadInfo uploadInfo=new UploadInfo(map.get("uploadAddress").toString(),map.get("uploadAuth").toString());
+                    uploadMap.put(uploadTitle,uploadInfo);
 
                     //处理UI需要切换到UI线程处理
                     runOnUiThread(new Runnable()
@@ -244,6 +247,8 @@ public class ShareActivity extends AppCompatActivity {
 
     private void initial() {
         photos = new ArrayList<>();
+        uploadImageIds= new ArrayList<>();
+        uploadMap=new HashMap<>();
     }
 
     private File createImageFile() throws IOException {
@@ -357,17 +362,24 @@ public class ShareActivity extends AppCompatActivity {
 
     public void submit(){
         OkHttpClient client = new OkHttpClient();
-        FormBody.Builder builder=new FormBody.Builder();
         SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
-        String id = prefs.getString("ID","1");
+        long id = Long.parseLong(prefs.getString("ID","1"));
         String content = wenan.getText().toString();
-        builder.add("id", id);
-        builder.add("body",content);
-        ArrayList<String> photoUri = new ArrayList<>();
+        while(uploadImageIds.size()<photos.size()){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        /*ArrayList<String> photoUris = new ArrayList<>();
         for(int i =0;i<photos.size();i++)
-            photoUri.add(photos.get(i).getPhotoUrl().toString());
-        builder.add("image_ids",new Gson().toJson(photoUri));
-        FormBody body=builder.build();
+            photoUris.add(photos.get(i).getPhotoUrl().toString());*/
+        Map<String,Object> map=new HashMap<>();
+        map.put("author_id",id);
+        map.put("body",content);
+        map.put("image_ids",uploadImageIds);
+        RequestBody body = RequestBody.create(JSON, new Gson().toJson(map));
         Request request = new Request.Builder()
                 .url(submitUrl)
                 .post(body)
@@ -392,17 +404,7 @@ public class ShareActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
                     Gson gson=new Gson();
-                    Map map=gson.fromJson(response.body().string(),Map.class);/*
-                    System.out.println(map.get("title").toString());
-                    System.out.println(map.get("uploadAddress").toString());
-                    System.out.println(map.get("uploadAuth").toString());
-                    System.out.println(map.get("imageUrl").toString());*/
-
-                    /*uploadTitle=map.get("title").toString();
-                    uploadAddress=map.get("uploadAddress").toString();
-                    uploadAuth=map.get("uploadAuth").toString();
-                    String uploadImageUri = map.get("imageUrl").toString();
-*/
+                    Map map=gson.fromJson(response.body().string(),Map.class);
                     //处理UI需要切换到UI线程处理
                     runOnUiThread(new Runnable()
                     {
