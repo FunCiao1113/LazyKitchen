@@ -74,7 +74,7 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
             }
         }else if(photoItem.getBitmap()!=null){
             holder.imageView.setImageBitmap(photoItem.getBitmap());
-        }
+        }else holder.imageView.setImageResource(R.drawable.ic_baseline_face_24);
     }
 
     @Override

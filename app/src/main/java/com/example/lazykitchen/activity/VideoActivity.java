@@ -43,7 +43,7 @@ public class VideoActivity extends AppCompatActivity {
     Intent intent;
     TextView videoTitle;
     TextView textContent;
-    private static final String DefaultCookUrl ="http://47.100.4.109:8080/recipe";
+    private static final String DefaultCookUrl ="http://47.100.4.109:8080/tutorial/random";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

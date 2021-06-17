@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.lazykitchen"
-        minSdkVersion 23
-        targetSdkVersion 23
+        minSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         aaptOptions.cruncherEnabled = false

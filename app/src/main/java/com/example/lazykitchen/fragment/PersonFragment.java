@@ -88,7 +88,7 @@ public class PersonFragment extends Fragment {
     class LocalReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "收到了本地发出的广播", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "收到了本地发出的广播", Toast.LENGTH_SHORT).show();
             Uri imageUrl = Uri.parse(intent.getStringExtra("imageUrl"));
             RequestOptions options = new RequestOptions()
                     .placeholder(R.drawable.ic_launcher_background)
