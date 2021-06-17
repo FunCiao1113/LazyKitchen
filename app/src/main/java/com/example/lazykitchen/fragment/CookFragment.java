@@ -54,7 +54,7 @@ public class CookFragment extends Fragment {
     class LocalReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "搜索成功", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "搜索成功", Toast.LENGTH_SHORT).show();
             String query=intent.getStringExtra("query");
             System.out.println(query);
             loadSearchCook(query);

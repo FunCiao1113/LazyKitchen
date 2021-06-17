@@ -54,7 +54,7 @@ public class BuyFragment extends Fragment {
     class LocalReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "搜索成功", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "搜索成功", Toast.LENGTH_SHORT).show();
             String query=intent.getStringExtra("query");
             System.out.println(query);
             loadBuyCook(query);
@@ -180,15 +180,15 @@ public class BuyFragment extends Fragment {
                     System.out.println(map.get("choices").toString());
                     videoList= GsonUtils.getResultList(gson.toJson(map.get("choices")),VideoItem.class);
                     //处理UI需要切换到UI线程处理
-                    getActivity().runOnUiThread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            adapter.setList(videoList);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+                    if(getActivity()!=null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.setList(videoList);
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
                 }
             }
         });
