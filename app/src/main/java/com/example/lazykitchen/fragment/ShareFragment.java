@@ -100,7 +100,7 @@ public class ShareFragment extends Fragment {
                     @Override
                     public void run()
                     {
-                        Toast toast = Toast.makeText(getContext(), "获取朋友圈信息失败", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(getContext(), "朋友圈更新失败", Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 });
@@ -138,7 +138,7 @@ public class ShareFragment extends Fragment {
                             pts.add(new PhotoItem(Uri.parse((String) photo.get("Url")),null));
                         }
 
-                        PyqItem pyqItem=new PyqItem("标题",content,createTime.toString(),123,pts);
+                        PyqItem pyqItem=new PyqItem("",content,createTime.toString(),R.drawable.ic_baseline_camera_24,pts);
                         List<PyqItem> tmp1=adapterPyq.getPyqItems();
                         tmp1.add(pyqItem);
                         adapterPyq.setPyqItems(tmp1);
@@ -160,7 +160,7 @@ public class ShareFragment extends Fragment {
                             //adapterPyq.notifySon();
                             adapterPyq.notifyDataSetChanged();
                             // 更新逻辑写在这里
-                            Toast toast = Toast.makeText(getContext(), "获取朋友圈信息成功", Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(getContext(), "朋友圈已更新", Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     });

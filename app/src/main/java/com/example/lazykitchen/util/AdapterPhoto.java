@@ -69,12 +69,14 @@ public class AdapterPhoto extends RecyclerView.Adapter<AdapterPhoto.PhotoViewHol
                         .apply(options)
                         .fitCenter()
                         .into(holder.imageView);
-            }else {
+            }else if(photoItem.getPhotoUrl().toString().startsWith("content")){
                 holder.imageView.setImageURI(photoItem.getPhotoUrl());
+            }else {
+                holder.imageView.setImageResource(R.drawable.ic_baseline_face_24);
             }
         }else if(photoItem.getBitmap()!=null){
             holder.imageView.setImageBitmap(photoItem.getBitmap());
-        }
+        }else holder.imageView.setImageResource(R.drawable.ic_baseline_face_24);
     }
 
     @Override

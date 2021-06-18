@@ -28,7 +28,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.053"
+                app:layout_constraintVertical_bias="0.093"
+                android:src="@drawable/ic_baseline_face_24"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
@@ -53,7 +54,6 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="36dp"
-                android:singleLine="false"
                 android:text="这是这张卡片的内容"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/head"
@@ -74,11 +74,11 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/photoRecyclerView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="267dp"
+                android:layout_height="171dp"
                 android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.79"
+                app:layout_constraintHorizontal_bias="0.809"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/content" />
 

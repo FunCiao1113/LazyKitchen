@@ -403,7 +403,7 @@ public class ShareActivity extends AppCompatActivity {
                     @Override
                     public void run()
                     {
-                        Toast toast = Toast.makeText(ShareActivity.this, "上传失败！", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(ShareActivity.this, "发表失败！", Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 });
