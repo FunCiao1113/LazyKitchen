@@ -29,6 +29,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.093"
+                android:src="@drawable/ic_baseline_face_24"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
@@ -73,11 +74,11 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/photoRecyclerView"
-                android:layout_width="299dp"
-                android:layout_height="179dp"
+                android:layout_width="267dp"
+                android:layout_height="171dp"
                 android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.79"
+                app:layout_constraintHorizontal_bias="0.809"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/content" />
 

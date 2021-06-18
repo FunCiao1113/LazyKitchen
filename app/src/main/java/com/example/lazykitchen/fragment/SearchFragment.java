@@ -66,22 +66,36 @@ public class SearchFragment extends Fragment {
         SearchView searchView = view.findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(true);
-        searchView.setQueryHint("输入您想查找的内容");
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener () {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+            public boolean onQueryTextSubmit(String query) {
                 Intent intent1 = new Intent(COOK_SEARCH);
-                intent1.putExtra("query", searchView.getQuery().toString());
-                System.out.println(searchView.getQuery());
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent1);
+                intent1.putExtra("query", query);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent1);
+
                 Intent intent2 = new Intent(SKILL_SEARCH);
-                intent2.putExtra("query", searchView.getQuery().toString());
-                System.out.println(searchView.getQuery());
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent2);
+                intent2.putExtra("query", query);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent2);
+
                 Intent intent3 = new Intent(BUY_SEARCH);
-                intent3.putExtra("query", searchView.getQuery().toString());
-                System.out.println(searchView.getQuery());
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent3);
+                intent3.putExtra("query", query);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent3);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Intent intent1 = new Intent(COOK_SEARCH);
+                intent1.putExtra("query", newText);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent1);
+
+                Intent intent2 = new Intent(SKILL_SEARCH);
+                intent2.putExtra("query", newText);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent2);
+
+                Intent intent3 = new Intent(BUY_SEARCH);
+                intent3.putExtra("query", newText);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent3);
+                return true;
             }
         });
         return view;
