@@ -333,7 +333,7 @@ public class ShareActivity extends AppCompatActivity {
                     // 边界逻辑 拍照图片uri刷新为空
                     setPhotoURI(null);
                     // 创建intent用于裁剪图片
-                    Intent intent1 = new Intent("com.android.camera.action.CROP");
+                    Intent intent1 = new Intent("a c");
                     // 获取图库所选图片的uri
                     Uri uri = data.getData();
                     intent1.putExtra("crop", "true");

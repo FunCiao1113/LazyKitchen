@@ -18,6 +18,7 @@ import android.widget.VideoView;
 import com.example.lazykitchen.R;
 import com.example.lazykitchen.util.ActivityUtils;
 import com.example.lazykitchen.util.Adapter;
+import com.example.lazykitchen.util.OnRecyclerItemClickListener;
 import com.example.lazykitchen.util.VideoItem;
 
 import java.util.ArrayList;
@@ -75,6 +76,20 @@ public class VideoActivity extends AppCompatActivity {
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         adapter = new Adapter(videoList);
+        adapter.setRecyclerItemClickListener(new OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(int Position, List<VideoItem> videoItemList) {
+                Intent intent = new Intent(VideoActivity.this, VideoActivity.class);
+                intent.putExtra("author_id",videoItemList.get(Position).getAuthorId());
+                intent.putExtra("author_name",videoItemList.get(Position).getAuthorName());
+                intent.putExtra("video_name",videoItemList.get(Position).getMaterialName());
+                intent.putExtra("play_url",videoItemList.get(Position).getPlayUrl());
+                intent.putExtra("description",videoItemList.get(Position).getDescription());
+                intent.putExtra("width",videoItemList.get(Position).getWidth());
+                intent.putExtra("height",videoItemList.get(Position).getHeight());
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(adapter);
     }
 
