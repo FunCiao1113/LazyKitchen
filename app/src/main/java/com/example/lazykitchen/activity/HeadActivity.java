@@ -303,7 +303,7 @@ public class HeadActivity extends AppCompatActivity {
                     @Override
                     public void run()
                     {
-                        Toast toast = Toast.makeText(HeadActivity.this, "签到失败！", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(HeadActivity.this, "上传失败！", Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 });
@@ -330,7 +330,7 @@ public class HeadActivity extends AppCompatActivity {
                         @Override
                         public void run()
                         {
-                            Toast.makeText(HeadActivity.this,"签到成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HeadActivity.this,"上传成功", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(HEAD_CHANGE);
                             intent.putExtra("imageUrl", uploadImageUri);
                             LocalBroadcastManager.getInstance(HeadActivity.this).sendBroadcast(intent);
